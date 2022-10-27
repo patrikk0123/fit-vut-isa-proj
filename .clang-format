@@ -1,0 +1,22 @@
+BasedOnStyle: Google
+IndentWidth: 2
+UseTab: Never
+ColumnLimit: 140
+PointerAlignment: Left
+SpaceAfterCStyleCast: false
+AllowShortIfStatementsOnASingleLine: false
+AlignTrailingComments: true
+SpacesBeforeTrailingComments: 3
+AlignConsecutiveMacros: Consecutive
+AlignConsecutiveBitFields: Consecutive
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterEnum: false
+  AfterStruct: false
+  AfterUnion: false
+  AfterFunction: true
+  AfterCaseLabel: false
+  SplitEmptyFunction: false
+  AfterControlStatement: MultiLine
+UseCRLF: false
+SortIncludes: CaseSensitive
