@@ -104,6 +104,10 @@ void read_response(int server_socket)
     error_exit(SENDER_ERR, "connecton with server ended");
   }
 
+  if (response_header->rcode) {
+    error_exit(SENDER_ERR, "server rejected sent file");
+  }
+
   char ip_addr[INET_ADDRSTRLEN];
   read_response_ip(ip_addr, dns_response);
 
