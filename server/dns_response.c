@@ -66,7 +66,9 @@ int decode_hostname(uint8_t* decoded, uint8_t* dns_buffer, char* basename)
 {
   char hostname[MAX_HOSTNAME_LEN];
   copy_hostname(hostname, dns_buffer);
-  strip_basename(hostname, basename);
+  if (strip_basename(hostname, basename) == -1) {
+    return -1;
+  }
   dedot_hostname(hostname);
 
   return base32_decode(hostname, decoded, MAX_HOSTNAME_LEN);
@@ -121,7 +123,7 @@ void write_response_len(uint8_t* dns_buffer, int hostname_len)
   dns_header->len = htons(sizeof(dns_header_t) + hostname_len + sizeof(dns_resource_record_t) - 2);
 }
 
-int write_response(uint8_t* rr_dns_buffer, uint8_t* query_dns_buffer)
+int write_response(uint8_t* rr_dns_buffer, uint8_t* query_dns_buffer, char* ip_addr)
 {
   int len_send = 0;
 
@@ -130,7 +132,7 @@ int write_response(uint8_t* rr_dns_buffer, uint8_t* query_dns_buffer)
   int hostname_len = write_response_hostname(rr_dns_buffer, query_dns_buffer);
   len_send += hostname_len;
 
-  len_send += write_response_answer(rr_dns_buffer, hostname_len, "1.2.3.4");
+  len_send += write_response_answer(rr_dns_buffer, hostname_len, ip_addr);
   write_response_len(rr_dns_buffer, hostname_len);
 
   return len_send;

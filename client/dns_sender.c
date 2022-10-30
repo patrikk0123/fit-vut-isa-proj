@@ -80,6 +80,8 @@ void send_file(char* dst_filename, char* src_filepath, int server_socket, char* 
     read_response(server_socket);
   }
 
+  printf("file successfuly sent\n");
+
   if (src_file != stdin) {
     fclose(src_file);
   }
@@ -87,15 +89,28 @@ void send_file(char* dst_filename, char* src_filepath, int server_socket, char* 
 
 void read_response(int server_socket)
 {
-  uint8_t response[BIG_BUFF_SIZE];
-  int num_received;
+  uint8_t dns_response[BIG_BUFF_SIZE];
 
-  if ((num_received = recv(server_socket, response, BIG_BUFF_SIZE, 0)) == -1) {
-    error_exit(1, "Internal error - recv");
+  int recv_code = recv(server_socket, dns_response, 2, MSG_WAITALL);
+  if (recv_code <= 0) {
+    error_exit(SENDER_ERR, "connecton with server ended");
   }
-  printf("Recevied: \n");
-  for (int i = 0; i < num_received; i++) {
-    printf("%c", response[i]);
+
+  dns_header_t* response_header = (dns_header_t*)dns_response;
+  int response_len = ntohs(response_header->len);
+
+  recv_code = recv(server_socket, dns_response, response_len, MSG_WAITALL);
+  if (recv_code <= 0) {
+    error_exit(SENDER_ERR, "connecton with server ended");
   }
-  printf("\n");
+
+  char ip_addr[INET_ADDRSTRLEN];
+  read_response_ip(ip_addr, dns_response);
+
+  if (!strcmp(ip_addr, IP_ADDR_BASENAME_ERR)) {
+    error_exit(BASENAME_ERR, "invalid basename");
+  }
+  if (!strcmp(ip_addr, IP_ADDR_FILE_ERR)) {
+    error_exit(DSTFILE_ERR, "file could not be created on the server");
+  }
 }

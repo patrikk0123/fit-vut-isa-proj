@@ -77,4 +77,12 @@ void write_query_len(uint8_t* dns_buffer, int hostname_len);
  */
 int write_query(uint8_t* dns_buffer, uint8_t* encoded_data, int data_len, uint8_t* basename);
 
+/**
+ * Reads resolved IP from DNS response.
+ * IP buffer is expected to be large enough.
+ * @param ip_addr    - buffer to write IP address to
+ * @param dns_buffer - DNS response buffer
+ */
+void read_response_ip(uint8_t* ip_addr, uint8_t* dns_buffer);
+
 #endif   // __DNS_QUESTION_H__

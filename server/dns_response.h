@@ -41,7 +41,7 @@ void dedot_hostname(uint8_t* hostname);
  * @param decoded    - buffer into which decoded data will be written
  * @param dns_buffer - DNS buffer
  * @param basename   - basename of DNS hostname
- * @return Number of bytes written
+ * @return Number of bytes written, or -1 if basename error occured
  */
 int decode_hostname(uint8_t* decoded, uint8_t* dns_buffer, char* basename);
 
@@ -83,11 +83,13 @@ void write_response_len(uint8_t* dns_buffer, int hostname_len);
 
 /**
  * Writes DNS response to the buffer.
+ * IP address in response is used to indicate error.
  * DNS response buffer is expected to be large enough.
  * @param rr_dns_buffer    - DNS response buffer
  * @param query_dns_buffer - DNS query buffer
+ * @param ip_addr          - string containing IP address
  * @return Number of bytes written
  */
-int write_response(uint8_t* rr_dns_buffer, uint8_t* query_dns_buffer);
+int write_response(uint8_t* rr_dns_buffer, uint8_t* query_dns_buffer, char* ip_addr);
 
 #endif   // __DNS_RESPONSE_H__

@@ -10,6 +10,8 @@
 #define FILE_ERR     2
 #define SENDER_ERR   3
 #define RECEIVER_ERR 4
+#define BASENAME_ERR 5
+#define DSTFILE_ERR  6
 #define INTERNAL_ERR 99
 
 #define SMALL_BUFF_SIZE 100

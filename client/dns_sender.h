@@ -11,6 +11,10 @@
 #define BYTES_READ    120
 #define BYTES_ENCODED BYTES_READ * 2
 
+#define IP_ADDR_OK           "1.2.3.4"
+#define IP_ADDR_BASENAME_ERR "1.1.1.1"
+#define IP_ADDR_FILE_ERR     "2.2.2.2"
+
 /**
  * Connects to the DNS server using TCP snd standard DNS port and returns socket file descriptor.
  * If server_ip is NULL, uses default DNS IP (as specified in resolv.conf).

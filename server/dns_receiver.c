@@ -66,14 +66,13 @@ void serve_client(int client_socket, char* dst_dirpath, char* base_host)
 {
   bool first_cycle = true;
   char dns_query[BIG_BUFF_SIZE];
-  char dns_response[BIG_BUFF_SIZE];
+  // char dns_response[BIG_BUFF_SIZE];
   FILE* file_fd = NULL;
 
   // process all queries
   while (true) {
     int recv_code = recv(client_socket, dns_query, 2, MSG_WAITALL);
-    if (recv_code == 0 || recv_code == -1) {
-      printf("connection with client ended\n");
+    if (recv_code <= 0) {
       break;
     }
 
@@ -81,21 +80,27 @@ void serve_client(int client_socket, char* dst_dirpath, char* base_host)
     int query_len = ntohs(query_header->len);
 
     recv_code = recv(client_socket, dns_query, query_len, MSG_WAITALL);
-    if (recv_code == 0 || recv_code == -1) {
-      printf("connection with client ended\n");
+    if (recv_code <= 0) {
       break;
     }
 
     char decoded_data[MAX_HOSTNAME_LEN];
     int decoded_data_len = decode_hostname(decoded_data, dns_query, base_host);
+    if (decoded_data_len == -1) {
+      send_response(client_socket, dns_query, IP_ADDR_BASENAME_ERR);
+      break;
+    }
+
     if (first_cycle) {
       char dst_filepath[SMALL_BUFF_SIZE];
       get_dst_filepath(dst_filepath, dst_dirpath, decoded_data);
-      printf("accepted file: %s\n", dst_filepath);
+      printf("creating file: ./%s\n", dst_filepath);
 
       file_fd = fopen(dst_filepath, "w+b");
       if (!file_fd) {
-        error_exit(1, "smula neni :DDD");
+        print_error("could not create requested file, end of connection");
+        send_response(client_socket, dns_query, IP_ADDR_FILE_ERR);
+        break;
       }
 
       first_cycle = false;
@@ -103,13 +108,20 @@ void serve_client(int client_socket, char* dst_dirpath, char* base_host)
       fwrite(decoded_data, 1, decoded_data_len, file_fd);
     }
 
-    int len_send = write_response(dns_response, dns_query);
-    send(client_socket, dns_response, len_send, 0);
+    send_response(client_socket, dns_query, IP_ADDR_OK);
   }
 
   if (file_fd) {
     fclose(file_fd);
   }
+}
+
+void send_response(int client_socket, uint8_t* dns_query, char* ip_addr)
+{
+  char dns_response[BIG_BUFF_SIZE];
+  int len_send = write_response(dns_response, dns_query, ip_addr);
+
+  send(client_socket, dns_response, len_send, 0);
 }
 
 void get_dst_filepath(char* dst_filepath, char* dst_dirpath, char* filename)

@@ -98,3 +98,15 @@ int write_query(uint8_t* dns_buffer, uint8_t* encoded_data, int data_len, uint8_
 
   return len_send;
 }
+
+void read_response_ip(uint8_t* ip_addr, uint8_t* dns_buffer)
+{
+  uint8_t* hostname = dns_buffer + sizeof(dns_udp_header_t);
+  while (*hostname) {
+    hostname++;
+  }
+  hostname++;
+
+  dns_resource_record_t* response = (dns_resource_record_t*)hostname;
+  inet_ntop(AF_INET, &(response->rdata), ip_addr, INET_ADDRSTRLEN);
+}
