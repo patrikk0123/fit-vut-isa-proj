@@ -14,9 +14,10 @@
  * Writes DNS query header to the buffer.
  * DNS buffer is expected to be large enough.
  * @param dns_buffer - DNS buffer
+ * @param id         - DNS query ID
  * @return Number of bytes written
  */
-int write_query_header(uint8_t* dns_buffer);
+int write_query_header(uint8_t* dns_buffer, uint16_t id);
 
 /**
  * Writes DNS hostname to the buffer (qname).
@@ -73,9 +74,10 @@ void write_query_len(uint8_t* dns_buffer, int hostname_len);
  * @param encoded_data - buffer of encoded data sent through DNS tunneling
  * @param data_len     - lenght of encoded data
  * @param basenaeme    - basename of DNS hostname
+ * @param id           - DNS query ID
  * @return Number of bytes written
  */
-int write_query(uint8_t* dns_buffer, uint8_t* encoded_data, int data_len, uint8_t* basename);
+int write_query(uint8_t* dns_buffer, uint8_t* encoded_data, int data_len, uint8_t* basename, uint16_t id);
 
 /**
  * Reads resolved IP from DNS response.

@@ -55,6 +55,7 @@ void send_file(char* dst_filename, char* src_filepath, int server_socket, char* 
   bool first_cycle = true;
   uint8_t dns_query[BIG_BUFF_SIZE];
 
+  int chunk_id = 0;
   while (!feof(src_file)) {
     int dns_query_len = 0;
 
@@ -62,7 +63,7 @@ void send_file(char* dst_filename, char* src_filepath, int server_socket, char* 
       uint8_t encoded_name[SMALL_BUFF_SIZE];
       size_t endoded_len = base32_encode(dst_filename, strlen(dst_filename), encoded_name, SMALL_BUFF_SIZE);
 
-      dns_query_len = write_query(dns_query, encoded_name, endoded_len, base_host);
+      dns_query_len = write_query(dns_query, encoded_name, endoded_len, base_host, chunk_id);
 
       first_cycle = false;
     } else {
@@ -71,8 +72,10 @@ void send_file(char* dst_filename, char* src_filepath, int server_socket, char* 
       uint8_t encoded_data[BYTES_ENCODED];
       size_t encoded_len = base32_encode(read_data, read_len, encoded_data, BYTES_ENCODED);
 
-      dns_query_len = write_query(dns_query, encoded_data, encoded_len, base_host);
+      dns_query_len = write_query(dns_query, encoded_data, encoded_len, base_host, chunk_id);
     }
+
+    chunk_id++;
 
     if (send(server_socket, dns_query, dns_query_len, 0) == -1) {
       error_exit(SENDER_ERR, "could not send data to the server");

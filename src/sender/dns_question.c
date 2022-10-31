@@ -11,12 +11,13 @@
 
 #include "dns.h"
 
-int write_query_header(uint8_t* dns_buffer)
+int write_query_header(uint8_t* dns_buffer, uint16_t id)
 {
   dns_header_t* dns_header = (dns_header_t*)dns_buffer;
 
   memset(dns_header, 0, sizeof(dns_header_t));
 
+  dns_header->id = htons(id);
   dns_header->rd = 1;
   dns_header->qdcount = htons(1);
 
@@ -85,10 +86,10 @@ void write_query_len(uint8_t* dns_buffer, int hostname_len)
   dns_header->len = htons(sizeof(dns_header_t) + hostname_len + sizeof(dns_question_t) - 2);
 }
 
-int write_query(uint8_t* dns_buffer, uint8_t* encoded_data, int data_len, uint8_t* basename)
+int write_query(uint8_t* dns_buffer, uint8_t* encoded_data, int data_len, uint8_t* basename, uint16_t id)
 {
   int len_send = 0;
-  len_send += write_query_header(dns_buffer);
+  len_send += write_query_header(dns_buffer, id);
 
   int host_len = write_query_hostname(dns_buffer, encoded_data, data_len, basename);
   len_send += host_len;
