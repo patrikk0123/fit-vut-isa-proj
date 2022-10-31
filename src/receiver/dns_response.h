@@ -15,6 +15,18 @@
 #define DNS_RR_TTL 999
 
 /**
+ * Gets ID of the DNS query.
+ * @param dns_buffer - DNS buffer
+ */
+uint16_t get_query_id(uint8_t* dns_buffer);
+
+/**
+ * Gets pointer to the QNAME part of the DNS query buffer.
+ * @param dns_buffer - DNS buffer
+ */
+uint8_t* get_query_hostname(uint8_t* dns_buffer);
+
+/**
  * Copies DNS hostname from DNS message.
  * Hostname buffer is expected to be large enough.
  * @param hostname_to - buffer into which hostname is copied

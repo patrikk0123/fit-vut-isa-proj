@@ -69,6 +69,11 @@ int write_query_hostname_basename(uint8_t* dns_buffer, int hostname_len, uint8_t
   return basename_len + 2;
 }
 
+uint8_t* get_query_hostname(uint8_t* dns_buffer)
+{
+  return dns_buffer + sizeof(dns_header_t);
+}
+
 int write_query_question(uint8_t* dns_buffer, int hostname_len)
 {
   dns_header_t* dns_header = (dns_header_t*)dns_buffer;

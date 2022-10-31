@@ -16,7 +16,11 @@
 
 #include "dns.h"
 #include "dns_response.h"
+#include "events/dns_receiver_events.h"
 #include "utils/generic.h"
+
+// this global variable is needed only because of receiver events
+struct in_addr ip_src;
 
 int init_dns_server()
 {
@@ -57,6 +61,9 @@ void start_dns_server(int server_socket, char* dst_dirpath, char* base_host)
       continue;
     }
 
+    ip_src = client_addr.sin_addr;
+    dns_receiver__on_transfer_init(&ip_src);
+
     serve_client(client_socket, dst_dirpath, base_host);
     close(client_socket);
   }
@@ -66,8 +73,10 @@ void serve_client(int client_socket, char* dst_dirpath, char* base_host)
 {
   bool first_cycle = true;
   char dns_query[BIG_BUFF_SIZE];
-  // char dns_response[BIG_BUFF_SIZE];
   FILE* file_fd = NULL;
+
+  int file_size = 0;
+  char dst_filepath[SMALL_BUFF_SIZE];
 
   // process all queries
   while (true) {
@@ -92,9 +101,7 @@ void serve_client(int client_socket, char* dst_dirpath, char* base_host)
     }
 
     if (first_cycle) {
-      char dst_filepath[SMALL_BUFF_SIZE];
       get_dst_filepath(dst_filepath, dst_dirpath, decoded_data);
-      printf("creating file: ./%s\n", dst_filepath);
 
       file_fd = fopen(dst_filepath, "w+b");
       if (!file_fd) {
@@ -105,11 +112,16 @@ void serve_client(int client_socket, char* dst_dirpath, char* base_host)
 
       first_cycle = false;
     } else {
+      file_size += decoded_data_len;
       fwrite(decoded_data, 1, decoded_data_len, file_fd);
+      dns_receiver__on_query_parsed(dst_filepath, get_query_hostname(dns_query));
+      dns_receiver__on_chunk_received(&ip_src, dst_filepath, get_query_id(dns_query), decoded_data_len);
     }
 
     send_response(client_socket, dns_query, IP_ADDR_OK);
   }
+
+  dns_receiver__on_transfer_completed(dst_filepath, file_size);
 
   if (file_fd) {
     fclose(file_fd);

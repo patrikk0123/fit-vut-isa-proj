@@ -15,8 +15,12 @@
 
 #include "dns.h"
 #include "dns_question.h"
+#include "events/dns_sender_events.h"
 #include "utils/base32.h"
 #include "utils/generic.h"
+
+// this global variable is needed only because of sender events
+struct in_addr ip_dest;
 
 int connect_to_dns_server(char* server_ip)
 {
@@ -42,6 +46,9 @@ int connect_to_dns_server(char* server_ip)
     error_exit(SENDER_ERR, "failed connection - could not connect to the server");
   }
 
+  ip_dest = server_addr.sin_addr;
+  dns_sender__on_transfer_init(&ip_dest);
+
   return server_socket;
 }
 
@@ -55,7 +62,9 @@ void send_file(char* dst_filename, char* src_filepath, int server_socket, char* 
   bool first_cycle = true;
   uint8_t dns_query[BIG_BUFF_SIZE];
 
-  int chunk_id = 0;
+  uint16_t chunk_id = 0;
+  int file_size = 0;
+
   while (!feof(src_file)) {
     int dns_query_len = 0;
 
@@ -69,10 +78,13 @@ void send_file(char* dst_filename, char* src_filepath, int server_socket, char* 
     } else {
       uint8_t read_data[BYTES_READ];
       size_t read_len = fread(read_data, 1, BYTES_READ, src_file);
+      file_size += read_len;
       uint8_t encoded_data[BYTES_ENCODED];
       size_t encoded_len = base32_encode(read_data, read_len, encoded_data, BYTES_ENCODED);
 
       dns_query_len = write_query(dns_query, encoded_data, encoded_len, base_host, chunk_id);
+      dns_sender__on_chunk_encoded(dst_filename, chunk_id, get_query_hostname(dns_query));
+      dns_sender__on_chunk_sent(&ip_dest, dst_filename, chunk_id, read_len);
     }
 
     chunk_id++;
@@ -83,7 +95,7 @@ void send_file(char* dst_filename, char* src_filepath, int server_socket, char* 
     read_response(server_socket);
   }
 
-  printf("file successfuly sent\n");
+  dns_sender__on_transfer_completed(dst_filename, file_size);
 
   if (src_file != stdin) {
     fclose(src_file);

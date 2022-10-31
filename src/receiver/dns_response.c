@@ -14,6 +14,18 @@
 #include "utils/base32.h"
 #include "utils/generic.h"
 
+uint16_t get_query_id(uint8_t* dns_buffer)
+{
+  dns_udp_header_t* query_dns_header = (dns_udp_header_t*)dns_buffer;
+
+  return ntohs(query_dns_header->id);
+}
+
+uint8_t* get_query_hostname(uint8_t* dns_buffer)
+{
+  return dns_buffer + sizeof(dns_udp_header_t);
+}
+
 void copy_hostname(uint8_t* hostname_to, uint8_t* dns_buffer)
 {
   uint8_t* hostname_from = dns_buffer + sizeof(dns_udp_header_t);

@@ -51,6 +51,12 @@ int write_query_hostname_data(uint8_t* dns_buffer, uint8_t* encoded_data, int da
 int write_query_hostname_basename(uint8_t* dns_buffer, int hostname_len, uint8_t* basename);
 
 /**
+ * Gets pointer to the QNAME part of the DNS query buffer.
+ * @param dns_buffer - DNS buffer
+ */
+uint8_t* get_query_hostname(uint8_t* dns_buffer);
+
+/**
  * Writes DNS question to the buffer (just qtype and qclass).
  * DNS buffer is expected to be large enough.
  * @param dns_buffer   - DNS buffer
