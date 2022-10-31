@@ -1,8 +1,8 @@
 CC=gcc
 CFLAGS=-std=c11
 
-dns-sender: client.c client/*.c client/*.h client/*/*.c client/*/*.h
-	$(CC) $(CFLAGS) client.c client/*.c client/*/*.c -o dns-sender
+dns_sender:  src/sender/*.c src/sender/*.h src/sender/*/*.c src/sender/*/*.h
+	$(CC) $(CFLAGS) src/sender/*.c src/sender/*/*.c -o dns_sender
 
-dns-receiver: server.c server/*.c server/*.h server/*/*.c server/*/*.h
-	$(CC) $(CFLAGS) server.c server/*.c server/*/*.c -o dns-receiver
+dns_receiver: src/receiver/*.c src/receiver/*.h src/receiver/*/*.c src/receiver/*/*.h
+	$(CC) $(CFLAGS) src/receiver/*.c src/receiver/*/*.c -o dns_receiver

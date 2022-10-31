@@ -20,3 +20,4 @@ BraceWrapping:
   AfterControlStatement: MultiLine
 UseCRLF: false
 SortIncludes: CaseSensitive
+AllowShortFunctionsOnASingleLine: Empty

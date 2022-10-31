@@ -1,7 +1,7 @@
 #include <unistd.h>
 
-#include "client/dns_sender.h"
-#include "client/utils/args.h"
+#include "dns_sender.h"
+#include "utils/args.h"
 
 int main(int argc, char* argv[])
 {

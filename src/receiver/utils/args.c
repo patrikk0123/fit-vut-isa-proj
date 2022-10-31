@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../client/utils/generic.h"
+#include "generic.h"
 
 void get_args(int argc, char* argv[], args_t* args)
 {

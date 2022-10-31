@@ -1,7 +1,5 @@
-dns-client
-dns-sender
-dns-server
-dns-receiver
+dns_sender
+dns_receiver
 test/
 test*.txt
 .vscode/
