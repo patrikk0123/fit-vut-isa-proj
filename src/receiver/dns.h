@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#define DNS_PORT 9123
+#define DNS_PORT 53
 
 #define QTYPE_A   1
 #define QCLASS_IN 1
