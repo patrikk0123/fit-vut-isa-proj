@@ -2,6 +2,8 @@ dns_sender
 dns_receiver
 test/
 test*.txt
+*.zip
+*.tar.gz
 .vscode/
 
 #https://github.com/martykan/ifj21/blob/master/.gitignore

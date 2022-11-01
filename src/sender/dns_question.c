@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 #include <stdint.h>
 #include <string.h>
+#include <sys/socket.h>
 
 #include "dns.h"
 
