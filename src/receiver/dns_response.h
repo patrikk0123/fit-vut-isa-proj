@@ -12,7 +12,7 @@
 
 #define MAX_HOSTNAME_LEN 253
 
-#define DNS_RR_TTL 999
+#define DNS_RR_TTL 0
 
 /**
  * Gets ID of the DNS query.
