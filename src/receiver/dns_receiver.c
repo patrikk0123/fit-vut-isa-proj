@@ -77,6 +77,7 @@ void serve_client(int client_socket, char* dst_dirpath, char* base_host)
 
   int file_size = 0;
   char dst_filepath[SMALL_BUFF_SIZE];
+  char* dst_filename = NULL;
 
   // process all queries
   while (true) {
@@ -102,6 +103,7 @@ void serve_client(int client_socket, char* dst_dirpath, char* base_host)
 
     if (first_cycle) {
       get_dst_filepath(dst_filepath, dst_dirpath, decoded_data);
+      dst_filename = filepath_to_filename(dst_filepath, dst_dirpath);
 
       file_fd = fopen(dst_filepath, "w+b");
       if (!file_fd) {
@@ -114,14 +116,14 @@ void serve_client(int client_socket, char* dst_dirpath, char* base_host)
     } else {
       file_size += decoded_data_len;
       fwrite(decoded_data, 1, decoded_data_len, file_fd);
-      dns_receiver__on_query_parsed(dst_filepath, get_query_hostname(dns_query));
-      dns_receiver__on_chunk_received(&ip_src, dst_filepath, get_query_id(dns_query), decoded_data_len);
+      dns_receiver__on_query_parsed(dst_filename, get_query_hostname(dns_query));
+      dns_receiver__on_chunk_received(&ip_src, dst_filename, get_query_id(dns_query), decoded_data_len);
     }
 
     send_response(client_socket, dns_query, IP_ADDR_OK);
   }
 
-  dns_receiver__on_transfer_completed(dst_filepath, file_size);
+  dns_receiver__on_transfer_completed(dst_filename, file_size);
 
   if (file_fd) {
     fclose(file_fd);
@@ -143,4 +145,9 @@ void get_dst_filepath(char* dst_filepath, char* dst_dirpath, char* filename)
     strcat(dst_filepath, "/");
   }
   strcat(dst_filepath, filename);
+}
+
+char* filepath_to_filename(char* dst_filepath, char* dst_dirpath)
+{
+  return dst_filepath + strlen(dst_dirpath) + (dst_dirpath[strlen(dst_dirpath) - 1] != '/' ? 1 : 0);
 }

@@ -59,4 +59,12 @@ void send_response(int client_socket, uint8_t* dns_query, char* ip_addr);
  */
 void get_dst_filepath(char* dst_filepath, char* dst_dirpath, char* filename);
 
+/**
+ * Extract filename from filepath.
+ * @param dst_filepath - filepath
+ * @param dst_dirpath  - dirpath to the filename
+ * @return Extracted filepath
+ */
+char* filepath_to_filename(char* dst_filepath, char* dst_dirpath);
+
 #endif   // __DNS_RECEIVER_H__
