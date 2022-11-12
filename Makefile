@@ -11,7 +11,7 @@ receiver: src/receiver/*.c src/receiver/*.h src/receiver/*/*.c src/receiver/*/*.
 	$(CC) $(CFLAGS) src/receiver/*.c src/receiver/*/*.c -o dns_receiver
 
 tar:
-	tar -czvf xkoryt04.tar.gz src/* Makefile
+	tar -cvf xkoryt04.tar src/* Makefile README.md manual.pdf
 
 zip:
 	zip -r xkoryt04.zip src/* Makefile
