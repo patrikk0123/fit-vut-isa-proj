@@ -3,6 +3,7 @@ dns_receiver
 test/
 test*.txt
 *.zip
+*.tar
 *.tar.gz
 .vscode/
 
