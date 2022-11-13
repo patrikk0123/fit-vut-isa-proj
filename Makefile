@@ -4,7 +4,7 @@ TESTDIR=test
 
 all: sender receiver
 
-sender:  src/sender/*.c src/sender/*.h src/sender/*/*.c src/sender/*/*.h
+sender: src/sender/*.c src/sender/*.h src/sender/*/*.c src/sender/*/*.h
 	$(CC) $(CFLAGS) src/sender/*.c src/sender/*/*.c -o dns_sender
 
 receiver: src/receiver/*.c src/receiver/*.h src/receiver/*/*.c src/receiver/*/*.h
@@ -14,7 +14,7 @@ tar:
 	tar -cvf xkoryt04.tar src/* Makefile README.md manual.pdf
 
 zip:
-	zip -r xkoryt04.zip src/* Makefile
+	zip -r xkoryt04.zip src/* src/* Makefile README.md manual.pdf
 
 clean:
 	rm -f dns_sender
